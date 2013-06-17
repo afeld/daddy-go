@@ -25,7 +25,8 @@ func main() {
   })
 
   // fmt.Println(res)
-  var firstPhoto Photo
-  res.DecodeField("data.0", &firstPhoto)
+  var photos []Photo
+  res.DecodeField("data", &photos)
+  firstPhoto := photos[0]
   fmt.Println(firstPhoto)
 }
