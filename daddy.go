@@ -6,7 +6,7 @@ import (
   "log"
   "net/http"
   "os"
-  sjson "github.com/bitly/go-simplejson"
+  simplejson "github.com/bitly/go-simplejson"
 )
 
 const tokenName = "DADDY_GO_FB_TOKEN"
@@ -19,14 +19,14 @@ func main() {
   fmt.Println(firstPhoto)
 }
 
-func getPhotos() *sjson.Json {
+func getPhotos() *simplejson.Json {
   token := os.Getenv(tokenName)
   if len(token) == 0 {
     log.Fatal(tokenName + " required")
   }
 
   body := request("https://graph.facebook.com/me/photos?access_token=" + token)
-  fbJson, err := sjson.NewJson(body)
+  fbJson, err := simplejson.NewJson(body)
   if err != nil {
     log.Fatal(err)
   }
