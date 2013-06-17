@@ -13,12 +13,29 @@ const tokenName = "DADDY_GO_FB_TOKEN"
 
 
 func main() {
+  fbJson := getPhotos()
+  // fmt.Println(fbJson)
+  firstPhoto := fbJson.Get("data").GetIndex(0)
+  fmt.Println(firstPhoto)
+}
+
+func getPhotos() *sjson.Json {
   token := os.Getenv(tokenName)
   if len(token) == 0 {
     log.Fatal(tokenName + " required")
   }
 
-  res, err := http.Get("https://graph.facebook.com/me/photos?access_token=" + token)
+  body := request("https://graph.facebook.com/me/photos?access_token=" + token)
+  fbJson, err := sjson.NewJson(body)
+  if err != nil {
+    log.Fatal(err)
+  }
+
+  return fbJson
+}
+
+func request(url string) []byte {
+  res, err := http.Get(url)
   if err != nil {
     log.Fatal(err)
   }
@@ -27,13 +44,6 @@ func main() {
   if err != nil {
     log.Fatal(err)
   }
-
   // fmt.Println(res)
-  fbJson, err := sjson.NewJson(body)
-  if err != nil {
-    log.Fatal(err)
-  }
-  // fmt.Println(fbJson)
-  firstPhoto := fbJson.Get("data").GetIndex(0)
-  fmt.Println(firstPhoto)
+  return body
 }
