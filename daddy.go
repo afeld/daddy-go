@@ -1,21 +1,31 @@
 package main
 
 import (
+  fb "github.com/huandu/facebook"
   "fmt"
-  "io/ioutil"
   "log"
-  "net/http"
+  "os"
 )
 
+const tokenName = "DADDY_GO_FB_TOKEN"
+
+type Photo struct {
+  Source string `facebook:",required"`
+}
+
+
 func main() {
-  res, err := http.Get("http://www.google.com/robots.txt")
-  if err != nil {
-    log.Fatal(err)
+  token := os.Getenv(tokenName)
+  if len(token) == 0 {
+    log.Fatal(tokenName + " required")
   }
-  robots, err := ioutil.ReadAll(res.Body)
-  res.Body.Close()
-  if err != nil {
-    log.Fatal(err)
-  }
-  fmt.Printf("%s", robots)
+
+  res, _ := fb.Get("/me/photos", fb.Params{
+    "access_token": token,
+  })
+
+  // fmt.Println(res)
+  var firstPhoto Photo
+  res.DecodeField("data.0", &firstPhoto)
+  fmt.Println(firstPhoto)
 }
