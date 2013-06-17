@@ -1,29 +1,15 @@
 package main
 
 import (
-  "encoding/json"
   "fmt"
   "io/ioutil"
   "log"
   "net/http"
   "os"
+  sjson "github.com/bitly/go-simplejson"
 )
 
 const tokenName = "DADDY_GO_FB_TOKEN"
-
-
-type FacebookFrom struct {
-  Name string "name"
-}
-
-type Photo struct {
-  Source string "source"
-  From FacebookFrom "from"
-}
-
-type FacebookJson struct {
-  Data []Photo "tag"
-}
 
 
 func main() {
@@ -43,12 +29,11 @@ func main() {
   }
 
   // fmt.Println(res)
-  var fbJson FacebookJson
-  error := json.Unmarshal(body, &fbJson)
-  if error != nil {
-    log.Fatal(error)
+  fbJson, err := sjson.NewJson(body)
+  if err != nil {
+    log.Fatal(err)
   }
   // fmt.Println(fbJson)
-  firstPhoto := fbJson.Data[0]
+  firstPhoto := fbJson.Get("data").GetIndex(0)
   fmt.Println(firstPhoto)
 }
